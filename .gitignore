@@ -1,0 +1,41 @@
+# 项目本地工具链与工作区（不入库）
+.sdk/
+.zcode/
+
+# 构建产物
+build/
+*.apk
+*.aab
+
+# 日志与临时文件
+*.log
+speedtest.bin
+emulator-*.log
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/upload-keystore.jks
+**/android/**/gradle-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 密钥与本地凭据（如有）
+*.jks
+*.keystore
