@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,6 +32,7 @@ class _AppWidgetState extends State<AppWidget>
   bool _isHandlingWindowClose = false;
   bool _didApplyStoredThemeSettings = false;
   Brightness? _lastTitleBarBrightness;
+  StreamSubscription<void>? _uiScaleSubscription;
 
   @override
   void initState() {
@@ -38,6 +40,13 @@ class _AppWidgetState extends State<AppWidget>
     trayManager.addListener(this);
     windowManager.addListener(this);
     WidgetsBinding.instance.addObserver(this);
+    // Rebuild the shell (and thus re-read the scale) the moment the setting
+    // changes, so 整体缩放 applies without an app restart.
+    _uiScaleSubscription = GStorage.watchSettings(
+      [SettingsKeys.uiScale],
+    ).listen((_) {
+      if (mounted) setState(() {});
+    });
     _initializePlatformIntegrations();
   }
 
@@ -77,6 +86,7 @@ class _AppWidgetState extends State<AppWidget>
     trayManager.removeListener(this);
     windowManager.removeListener(this);
     WidgetsBinding.instance.removeObserver(this);
+    _uiScaleSubscription?.cancel();
     super.dispose();
   }
 

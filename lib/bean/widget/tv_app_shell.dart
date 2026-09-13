@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kazumi/bean/widget/tv_back_interceptor.dart';
 import 'package:kazumi/bean/widget/tv_focus_navigation.dart';
 import 'package:kazumi/navigation.dart';
 import 'package:kazumi/services/platform/tv_mode.dart';
@@ -29,6 +30,7 @@ class _TvAppShellState extends State<TvAppShell>
       _channel.setMethodCallHandler((call) async {
         if (call.method == 'home') TvNavigation.goHome();
         if (call.method == 'back') {
+          if (TvBackInterceptor.handle()) return;
           await rootNavigatorKey.currentState?.maybePop();
         }
       });

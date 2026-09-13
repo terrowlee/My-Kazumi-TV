@@ -7,6 +7,8 @@ import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
 import 'package:kazumi/bean/settings/settings_list.dart';
 import 'package:kazumi/bean/widget/content_section.dart';
+import 'package:kazumi/bean/widget/tv_back_interceptor.dart';
+import 'package:kazumi/navigation.dart';
 import 'package:kazumi/pages/settings/player_settings.dart';
 import 'package:kazumi/utils/constants.dart';
 
@@ -173,12 +175,52 @@ class _SettingsPageState extends State<SettingsPage> {
       path, () => FocusNode(debugLabel: 'TV settings category $path'));
 
   @override
+  void initState() {
+    super.initState();
+    if (TvMode.enabled) {
+      TvBackInterceptor.register(_handleTvBack);
+    }
+  }
+
+  @override
   void dispose() {
+    if (TvMode.enabled) {
+      TvBackInterceptor.unregister(_handleTvBack);
+    }
     _paneFocus.dispose();
     for (final node in _railNodes.values) {
       node.dispose();
     }
     super.dispose();
+  }
+
+  /// TV back key: inside a detail pane, back first moves focus to the
+  /// category sidebar (same as LEFT); with the sidebar focused, back exits
+  /// settings to the main page.
+  bool _handleTvBack() {
+    final route = ModalRoute.of(context);
+    if (route == null || !route.isCurrent) return false;
+    final railNode = _railNode(_selectedCategoryPath);
+    final focus = FocusManager.instance.primaryFocus;
+    if (focus == railNode) {
+      // Sidebar already focused: exit settings (inner stack is discarded).
+      rootNavigatorKey.currentState?.pop();
+      return true;
+    }
+    if (focus == null || _focusInPane(focus) || _location == '/settings') {
+      railNode.requestFocus();
+      return true;
+    }
+    // Focus somewhere unexpected (e.g. inside a dialog-less overlay): let the
+    // normal pop flow handle it.
+    return false;
+  }
+
+  bool _focusInPane(FocusNode focus) {
+    for (FocusNode? node = focus; node != null; node = node.parent) {
+      if (node == _paneFocus) return true;
+    }
+    return false;
   }
 
   void _enterPane() {
@@ -248,7 +290,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final wide = constraints.maxWidth > LayoutBreakpoint.compact['width']!;
+      // TV is always wide: the category sidebar + detail pane must never
+      // collapse into the standalone list layout.
+      final wide = TvMode.enabled ||
+          constraints.maxWidth > LayoutBreakpoint.compact['width']!;
       return NavigatorPopHandler<Object?>(
         onPopWithResult: (_) => _goBack(),
         child: Scaffold(
