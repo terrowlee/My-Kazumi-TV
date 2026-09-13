@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:kazumi/services/platform/tv_mode.dart';
+
 class RulePageIntro extends StatelessWidget {
   const RulePageIntro({
     super.key,
@@ -18,6 +20,25 @@ class RulePageIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    // On TV the big decorative banner wastes focus space; keep the title and
+    // action buttons only.
+    if (TvMode.enabled) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(4, 6, 4, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w700)),
+            if (actions.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(spacing: 8, runSpacing: 8, children: actions),
+            ],
+          ],
+        ),
+      );
+    }
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),

@@ -14,31 +14,31 @@ class DecoderSettings extends StatefulWidget {
 class _DecoderSettingsState extends State<DecoderSettings> {
   late String _decoder = GStorage.getSetting(SettingsKeys.hardwareDecoder);
 
+  void _update(String? value) {
+    if (value != null) {
+      GStorage.putSetting<String>(SettingsKeys.hardwareDecoder, value);
+      setState(() {
+        _decoder = value;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SettingsDetailScaffold(
       title: const Text('硬件解码器'),
       body: SettingsList(
         sections: [
-          SettingsRadioSection<String>(
+          SettingsSection(
             title: Text('选择不受支持的解码器将回退到软件解码'),
-            groupValue: _decoder,
-            onChanged: (String? value) {
-              if (value != null) {
-                GStorage.putSetting<String>(
-                    SettingsKeys.hardwareDecoder, value);
-                setState(() {
-                  _decoder = value;
-                });
-              }
-            },
-            tiles: hardwareDecodersList.entries
-                .map((e) => SettingsTile<String>.radioTile(
-                      title: Text(e.key),
-                      description: Text(e.value),
-                      radioValue: e.key,
-                    ))
-                .toList(),
+            tiles: [
+              TvSelectionTile<String>(
+                title: const Text('硬件解码器'),
+                items: hardwareDecodersList,
+                groupValue: _decoder,
+                onChanged: _update,
+              ),
+            ],
           ),
         ],
       ),

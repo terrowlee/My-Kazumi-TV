@@ -26,33 +26,28 @@ class _RendererSettingsState extends State<RendererSettings> {
       title: const Text('视频渲染器'),
       body: SettingsList(
         sections: [
-          SettingsRadioSection<String>(
+          SettingsSection(
             title: Text('选择合适的渲染器以获得最佳播放体验'),
-            groupValue: _renderer,
-            onChanged: (String? value) {
-              if (value != null) {
-                GStorage.putSetting<String>(
-                    SettingsKeys.androidVideoRenderer, value);
-                setState(() {
-                  _renderer = value;
-                });
-              }
-            },
             tiles: [
-              ...androidVideoRenderersList.entries
-                  .map((e) => SettingsTile<String>.radioTile(
-                        title: Text(
-                          TvMode.enabled && e.key == 'auto'
-                              ? 'auto（电视推荐）'
-                              : e.key,
-                        ),
-                        description: Text(
-                          TvMode.enabled && e.key == 'auto'
-                              ? '电视自动使用 MediaCodec 直连 Surface，避免高码率视频卡顿；不支持超分辨率'
-                              : e.value,
-                        ),
-                        radioValue: e.key,
-                      )),
+              TvSelectionTile<String>(
+                title: const Text('视频渲染器'),
+                items: {
+                  for (final e in androidVideoRenderersList.entries)
+                    e.key: (TvMode.enabled && e.key == 'auto')
+                        ? 'auto（电视推荐）'
+                        : e.key,
+                },
+                groupValue: _renderer,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    GStorage.putSetting<String>(
+                        SettingsKeys.androidVideoRenderer, value);
+                    setState(() {
+                      _renderer = value;
+                    });
+                  }
+                },
+              ),
               if (Platform.isAndroid)
                 SettingsTile.switchTile(
                   title: const Text('SurfaceProducer 合成管线'),

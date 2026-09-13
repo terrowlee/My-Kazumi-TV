@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/bean/widget/content_section.dart';
 import 'package:kazumi/bean/widget/split_list_row.dart';
 import 'package:kazumi/services/platform/tv_mode.dart';
@@ -439,7 +440,8 @@ class SettingsTile<T> extends StatelessWidget {
     final secondary =
         enabled ? colorScheme.onSurfaceVariant : _disabledOn(context);
 
-    return InkWell(
+    final row = InkWell(
+      canRequestFocus: !TvMode.enabled,
       onTap: _tapHandler(context),
       onHighlightChanged: SplitListRow.pressReporterOf(context),
       child: Padding(
@@ -485,6 +487,170 @@ class SettingsTile<T> extends StatelessWidget {
           ),
         ),
       ),
+    );
+
+    if (!TvMode.enabled) {
+      return row;
+    }
+    // On TV the theme focus overlay alone is nearly invisible; give every
+    // settings row the same clear focus frame as the slider rows. The outer
+    // Focus node is the sole traversal target and forwards OK to the row's
+    // tap handler (the inner InkWell is not focusable here).
+    return _TvRowFocusHighlight(
+      onActivate: _tapHandler(context),
+      child: row,
+    );
+  }
+}
+
+/// TV 行级焦点视觉：主题色实线边框 + 轻微填充。遥控器上下移动时清晰可辨。
+class _TvRowFocusHighlight extends StatefulWidget {
+  const _TvRowFocusHighlight({required this.child, this.onActivate});
+
+  final Widget child;
+  final VoidCallback? onActivate;
+
+  @override
+  State<_TvRowFocusHighlight> createState() => _TvRowFocusHighlightState();
+}
+
+class _TvRowFocusHighlightState extends State<_TvRowFocusHighlight> {
+  final FocusNode _focusNode = FocusNode(debugLabel: 'SettingsRow');
+  bool _focused = false;
+
+  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
+    final isActivateKey = event.logicalKey == LogicalKeyboardKey.select ||
+        event.logicalKey == LogicalKeyboardKey.enter ||
+        event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+        event.logicalKey == LogicalKeyboardKey.gameButtonA;
+    if (!isActivateKey) {
+      return KeyEventResult.ignored;
+    }
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    widget.onActivate?.call();
+    return KeyEventResult.handled;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Focus(
+      focusNode: _focusNode,
+      onKeyEvent: _handleKey,
+      onFocusChange: (focused) => setState(() => _focused = focused),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _focused
+                ? colorScheme.primary
+                : colorScheme.primary.withValues(alpha: 0),
+            width: 2.5,
+          ),
+          color: _focused
+              ? colorScheme.primary.withValues(alpha: 0.08)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+/// TV 端"多选一"行：行内显示当前值，按 OK 弹出选项对话框，选中即应用。
+/// 非电视端不使用（radio 页保持原样）。
+class TvSelectionTile<T> extends StatelessWidget {
+  const TvSelectionTile({
+    super.key,
+    required this.title,
+    required this.items,
+    required this.groupValue,
+    required this.onChanged,
+    this.leading,
+  });
+
+  final Widget title;
+  final IconData? leading;
+  final Map<T, String> items;
+  final T groupValue;
+  final ValueChanged<T> onChanged;
+
+  void _openSelectionDialog(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    KazumiDialog.show(
+      builder: (context) {
+        return AlertDialog(
+          title: title,
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final entry in items.entries)
+                    InkWell(
+                      onTap: () {
+                        KazumiDialog.dismiss();
+                        if (entry.key != groupValue) {
+                          onChanged(entry.key);
+                        }
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 14),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.06),
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                entry.value,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                            if (entry.key == groupValue)
+                              Icon(Icons.check_rounded,
+                                  size: 22, color: colorScheme.primary),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentLabel = items[groupValue] ?? groupValue.toString();
+    return SettingsTile<String>(
+      title: title,
+      leading: leading,
+      value: Text(currentLabel),
+      onPressed: (_) => _openSelectionDialog(context),
     );
   }
 }

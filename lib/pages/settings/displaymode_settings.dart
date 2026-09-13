@@ -63,24 +63,27 @@ class _SetDisplayModeState extends State<SetDisplayMode> {
           ? const LoadingIndicator()
           : SettingsList(
               sections: [
-                SettingsRadioSection<DisplayMode>(
+                SettingsSection(
                   title: Text('没有生效? 重启app试试'),
-                  groupValue: preferred,
-                  onChanged: (DisplayMode? newMode) async {
-                    await FlutterDisplayMode.setPreferredMode(newMode!);
-                    await Future<dynamic>.delayed(
-                      const Duration(milliseconds: 100),
-                    );
-                    await fetchAll();
-                  },
-                  tiles: modes
-                      .map((e) => SettingsTile<DisplayMode>.radioTile(
-                            radioValue: e,
-                            title: e == DisplayMode.auto
-                                ? Text('自动')
-                                : Text('$e${e == active ? "  [系统]" : ""}'),
-                          ))
-                      .toList(),
+                  tiles: [
+                    TvSelectionTile<DisplayMode>(
+                      title: const Text('屏幕帧率'),
+                      items: {
+                        for (final e in modes)
+                          e: e == DisplayMode.auto
+                              ? '自动'
+                              : '$e${e == active ? "  [系统]" : ""}',
+                      },
+                      groupValue: preferred ?? DisplayMode.auto,
+                      onChanged: (DisplayMode newMode) async {
+                        await FlutterDisplayMode.setPreferredMode(newMode);
+                        await Future<dynamic>.delayed(
+                          const Duration(milliseconds: 100),
+                        );
+                        await fetchAll();
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

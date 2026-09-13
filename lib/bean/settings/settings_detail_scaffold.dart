@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
+import 'package:kazumi/services/platform/tv_mode.dart';
 
 class SettingsPaneScope extends InheritedWidget {
   const SettingsPaneScope({
@@ -48,11 +49,13 @@ class SettingsDetailScaffold extends StatelessWidget {
     final PreferredSizeWidget appBar;
 
     if (scope != null && scope.embedded) {
+      // On TV the remote back key handles dismissal; a visible back button
+      // is one more focusable element than needed.
+      final showBack = !TvMode.enabled &&
+          (scope.showBackButton ||
+              (ModalRoute.of(context)?.impliesAppBarDismissal ?? false));
       final paneLeading = leading ??
-          ((scope.showBackButton ||
-                  (ModalRoute.of(context)?.impliesAppBarDismissal ?? false))
-              ? BackButton(onPressed: scope.onBack)
-              : null);
+          (showBack ? BackButton(onPressed: scope.onBack) : null);
       appBar = AppBar(
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
@@ -71,7 +74,7 @@ class SettingsDetailScaffold extends StatelessWidget {
         title: title,
         actions: actions,
         leading: leading ??
-            (onBack == null
+            (onBack == null || TvMode.enabled
                 ? null
                 : IconButton(
                     onPressed: onBack,

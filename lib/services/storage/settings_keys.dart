@@ -372,6 +372,13 @@ class SettingsKeys {
     '',
     group: SettingGroup.player,
   );
+
+  /// 全局 UI 缩放百分比（75–150，默认 100）。通过 FittedBox 等比缩放整棵树。
+  static const uiScale = SettingKey<double>(
+    'uiScale',
+    100,
+    group: SettingGroup.interface,
+  );
   static const androidEnableOpenSLES = SettingKey<bool>(
     _SettingBoxKey.androidEnableOpenSLES,
     true,

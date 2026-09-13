@@ -10,8 +10,8 @@ import 'package:kazumi/bean/widget/content_section.dart';
 import 'package:kazumi/pages/settings/player_settings.dart';
 import 'package:kazumi/utils/constants.dart';
 
-class _SettingsCategory {
-  const _SettingsCategory({
+class SettingsCategory {
+  const SettingsCategory({
     required this.label,
     required this.description,
     required this.icon,
@@ -24,30 +24,30 @@ class _SettingsCategory {
   final String path;
 }
 
-class _SettingsGroup {
-  const _SettingsGroup({required this.title, required this.categories});
+class SettingsGroup {
+  const SettingsGroup({required this.title, required this.categories});
 
   final String title;
-  final List<_SettingsCategory> categories;
+  final List<SettingsCategory> categories;
 }
 
-const List<_SettingsGroup> _settingsGroups = [
-  _SettingsGroup(
+const List<SettingsGroup> settingsGroups = [
+  SettingsGroup(
     title: '播放',
     categories: [
-      _SettingsCategory(
+      SettingsCategory(
         label: '播放设置',
         description: '解码、渲染与播放行为',
         icon: Icons.display_settings_rounded,
         path: '/settings/player',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '弹幕设置',
         description: '弹幕来源与显示效果',
         icon: Icons.subtitles_rounded,
         path: '/settings/danmaku',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '操作设置',
         description: '播放器按键映射',
         icon: Icons.keyboard_rounded,
@@ -55,16 +55,16 @@ const List<_SettingsGroup> _settingsGroups = [
       ),
     ],
   ),
-  _SettingsGroup(
+  SettingsGroup(
     title: '资源',
     categories: [
-      _SettingsCategory(
+      SettingsCategory(
         label: '规则管理',
         description: '番剧资源规则',
         icon: Icons.extension_rounded,
         path: '/settings/plugin',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '下载设置',
         description: '并发数与弹幕缓存',
         icon: Icons.downloading_rounded,
@@ -72,28 +72,28 @@ const List<_SettingsGroup> _settingsGroups = [
       ),
     ],
   ),
-  _SettingsGroup(
+  SettingsGroup(
     title: '应用',
     categories: [
-      _SettingsCategory(
+      SettingsCategory(
         label: '外观设置',
         description: '主题、配色与字体',
         icon: Icons.palette_rounded,
         path: '/settings/theme',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '界面设置',
         description: '启动、窗口行为与展示信息',
         icon: Icons.pages_rounded,
         path: '/settings/interface',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '同步设置',
         description: '追番状态与多设备同步',
         icon: Icons.cloud_rounded,
         path: '/settings/sync',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '网络设置',
         description: '访问加速与代理',
         icon: Icons.language_rounded,
@@ -101,22 +101,22 @@ const List<_SettingsGroup> _settingsGroups = [
       ),
     ],
   ),
-  _SettingsGroup(
+  SettingsGroup(
     title: '其他',
     categories: [
-      _SettingsCategory(
+      SettingsCategory(
         label: '更新设置',
         description: '应用与规则更新',
         icon: Icons.update_rounded,
         path: '/settings/update',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '存储与日志',
         description: '图片缓存与错误日志',
         icon: Icons.storage_rounded,
         path: '/settings/storage',
       ),
-      _SettingsCategory(
+      SettingsCategory(
         label: '关于',
         description: '版本与开源信息',
         icon: Icons.info_outline_rounded,
@@ -140,7 +140,7 @@ String _categoryPath(String location) {
       _isWithinPath(location, '/settings/webdav')) {
     return '/settings/sync';
   }
-  for (final group in _settingsGroups) {
+  for (final group in settingsGroups) {
     for (final category in group.categories) {
       if (_isWithinPath(location, category.path)) {
         return category.path;
@@ -150,8 +150,8 @@ String _categoryPath(String location) {
   return location;
 }
 
-class _SettingsCategorySelected extends Notification {
-  const _SettingsCategorySelected(this.path);
+class SettingsCategorySelected extends Notification {
+  const SettingsCategorySelected(this.path);
 
   final String path;
 }
@@ -255,7 +255,8 @@ class _SettingsPageState extends State<SettingsPage> {
           appBar: wide
               ? SysAppBar(
                   title: const Text('设置'),
-                  leading: BackButton(onPressed: _exitSettings),
+                  leading:
+                      TvMode.enabled ? null : BackButton(onPressed: _exitSettings),
                 )
               : null,
           body: SafeArea(
@@ -294,7 +295,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       embedded: wide,
                       showBackButton: _isSecondaryRoute,
                       onBack: _goBack,
-                      child: NotificationListener<_SettingsCategorySelected>(
+                      child: NotificationListener<SettingsCategorySelected>(
                         onNotification: (notification) {
                           _pushCategory(notification.path);
                           return true;
@@ -329,13 +330,15 @@ class SettingsIndexPage extends StatelessWidget {
     return Scaffold(
       appBar: SysAppBar(
         title: const Text('设置'),
-        leading: BackButton(onPressed: () {
-          if (!context.maybePop()) context.navigate('/tab/my');
-        }),
+        leading: TvMode.enabled
+            ? null
+            : BackButton(onPressed: () {
+                if (!context.maybePop()) context.navigate('/tab/my');
+              }),
       ),
       body: _SettingsMenu(
         wide: false,
-        onSelect: (path) => _SettingsCategorySelected(path).dispatch(context),
+        onSelect: (path) => SettingsCategorySelected(path).dispatch(context),
       ),
     );
   }
@@ -365,7 +368,7 @@ class _SettingsMenu extends StatelessWidget {
             ? const EdgeInsets.fromLTRB(4, 0, 0, 12)
             : const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          for (final group in _settingsGroups)
+          for (final group in settingsGroups)
             if (wide) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(28, 16, 28, 8),
@@ -410,7 +413,7 @@ class _RailDestination extends StatelessWidget {
     this.onEnterPane,
   });
 
-  final _SettingsCategory category;
+  final SettingsCategory category;
   final bool selected;
   final VoidCallback onTap;
   final FocusNode? focusNode;

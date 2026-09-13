@@ -105,6 +105,21 @@ class _InterfaceSettingsPageState extends State<InterfaceSettingsPage> {
               initialValue: showRating,
             ),
           ]),
+          SettingsSection(title: Text('显示大小'), tiles: [
+            TvSelectionTile<double>(
+              leading: Icons.photo_size_select_large_rounded,
+              title: const Text('整体缩放'),
+              items: {
+                for (final percent in [75, 80, 85, 90, 100, 105, 110, 125, 150])
+                  percent.toDouble(): '$percent%',
+              },
+              groupValue: GStorage.getSetting<double>(SettingsKeys.uiScale),
+              onChanged: (value) async {
+                await GStorage.putSetting(SettingsKeys.uiScale, value);
+                if (mounted) setState(() {});
+              },
+            ),
+          ]),
           if (isDesktop())
             SettingsSection(
               title: const Text('窗口行为'),

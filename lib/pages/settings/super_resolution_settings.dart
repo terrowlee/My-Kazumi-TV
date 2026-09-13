@@ -33,26 +33,26 @@ class _SuperResolutionSettingsState extends State<SuperResolutionSettings> {
       title: const Text('超分辨率'),
       body: SettingsList(
         sections: [
-          SettingsRadioSection<SuperResolutionMode>(
+          SettingsSection(
             title: Text('超分辨率需要启用硬件解码, 若启用硬件解码后仍然不生效, 尝试切换视频渲染器为 gpu'),
-            groupValue: superResolutionMode,
-            onChanged: (SuperResolutionMode? value) {
-              if (value == null) return;
-              GStorage.putSetting<int>(
-                SettingsKeys.defaultSuperResolutionMode,
-                value.storageValue,
-              );
-              setState(() {
-                superResolutionMode = value;
-              });
-            },
             tiles: [
-              for (final mode in SuperResolutionMode.values)
-                SettingsTile<SuperResolutionMode>.radioTile(
-                  title: Text(mode.label),
-                  description: Text(mode.description),
-                  radioValue: mode,
-                ),
+              TvSelectionTile<SuperResolutionMode>(
+                title: const Text('超分辨率模式'),
+                items: {
+                  for (final mode in SuperResolutionMode.values)
+                    mode: mode.label,
+                },
+                groupValue: superResolutionMode,
+                onChanged: (SuperResolutionMode value) {
+                  GStorage.putSetting<int>(
+                    SettingsKeys.defaultSuperResolutionMode,
+                    value.storageValue,
+                  );
+                  setState(() {
+                    superResolutionMode = value;
+                  });
+                },
+              ),
             ],
           ),
           SettingsSection(

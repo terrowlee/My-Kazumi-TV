@@ -78,8 +78,8 @@ class _TvAppShellState extends State<TvAppShell>
     final colorScheme = theme.colorScheme;
     return Theme(
       data: theme.copyWith(
-        focusColor: colorScheme.primary.withValues(alpha: 0.24),
-        hoverColor: colorScheme.primary.withValues(alpha: 0.12),
+        focusColor: colorScheme.primary.withValues(alpha: 0.35),
+        hoverColor: colorScheme.primary.withValues(alpha: 0.18),
         visualDensity: VisualDensity.comfortable,
       ),
       child: FocusTraversalGroup(

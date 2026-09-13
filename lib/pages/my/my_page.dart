@@ -6,6 +6,8 @@ import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:kazumi/pages/menu/route_visibility.dart';
 import 'package:kazumi/pages/my/my_controller.dart';
 import 'package:kazumi/pages/my/my_space_view.dart';
+import 'package:kazumi/pages/settings/tv_settings_index.dart';
+import 'package:kazumi/services/platform/tv_mode.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key, required this.controller});
@@ -76,24 +78,30 @@ class _MyPageState extends State<MyPage> {
               ?.copyWith(fontWeight: FontWeight.w700),
         ),
         needTopOffset: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: MySettingsButton(
-              onTap: () => context.pushNamed('/settings/'),
-            ),
-          ),
-        ],
+        actions: TvMode.enabled
+            ? null
+            : [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: MySettingsButton(
+                    onTap: () => context.pushNamed('/settings/'),
+                  ),
+                ),
+              ],
       ),
       body: SafeArea(
         top: false,
         bottom: false,
-        child: Observer(
-          builder: (context) => MySpaceView(
-            stats: widget.controller.watchStats,
-            onOpen: _open,
-          ),
-        ),
+        child: TvMode.enabled
+            // On TV the 我的 tab IS a simple settings index; the stats/cards
+            // view only adds noise for remote navigation.
+            ? const TvSettingsIndexPage()
+            : Observer(
+                builder: (context) => MySpaceView(
+                  stats: widget.controller.watchStats,
+                  onOpen: _open,
+                ),
+              ),
       ),
     );
   }
