@@ -377,7 +377,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                 SettingsTile(
                   leading: Icons.sixty_fps_rounded,
                   onPressed: (_) async {
-                    context.pushNamed('/settings/theme/display');
+                    SettingsCategorySelected('/settings/theme/display').dispatch(context);
                   },
                   title: Text('屏幕帧率'),
                 ),

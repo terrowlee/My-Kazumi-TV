@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 
 import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
 import 'package:kazumi/bean/settings/settings_list.dart';
@@ -59,7 +58,7 @@ class _WebDavSyncPageState extends State<WebDavSyncPage> {
       });
 
   Future<void> _configure() async {
-    await context.pushNamed('/settings/webdav/editor');
+    SettingsCategorySelected('/settings/webdav/editor').dispatch(context);
     if (mounted) {
       setState(() {
         _message = null;

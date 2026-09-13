@@ -152,12 +152,6 @@ String _categoryPath(String location) {
   return location;
 }
 
-class SettingsCategorySelected extends Notification {
-  const SettingsCategorySelected(this.path);
-
-  final String path;
-}
-
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key, required this.location});
 
@@ -279,13 +273,14 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() => _location = _normalizePath(path));
   }
 
-  Future<void> _pushCategory(String path) async {
+  Future<void> _pushCategory(String path, {Object? arguments}) async {
     if (_categoryNavigation != null) return;
     final navigation = Object();
     final previousLocation = _location;
     _categoryNavigation = navigation;
     setState(() => _location = _normalizePath(path));
-    await _outletKey.currentState!.push<void>(_outletPath(path));
+    await _outletKey.currentState!
+        .push<void>(_outletPath(path), arguments: arguments);
     // Ignore completions from history replaced by a rail selection.
     if (!mounted || _categoryNavigation != navigation) return;
     setState(() {
@@ -358,7 +353,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       onBack: _goBack,
                       child: NotificationListener<SettingsCategorySelected>(
                         onNotification: (notification) {
-                          _pushCategory(notification.path);
+                          _pushCategory(
+                            notification.path,
+                            arguments: notification.arguments,
+                          );
                           return true;
                         },
                         child: Theme(

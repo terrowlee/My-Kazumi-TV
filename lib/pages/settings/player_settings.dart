@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FilteringTextInputFormatter;
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
 import 'package:kazumi/bean/widget/tv_qr_input_panel.dart';
@@ -275,7 +274,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               SettingsTile(
                 leading: Icons.developer_board_rounded,
                 onPressed: (_) async {
-                  await context.pushNamed('/settings/player/decoder');
+                  SettingsCategorySelected('/settings/player/decoder').dispatch(context);
                 },
                 title: Text('硬件解码器'),
                 description: Text('仅在硬件解码启用时生效'),
@@ -284,7 +283,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 SettingsTile(
                   leading: Icons.tv_rounded,
                   onPressed: (_) async {
-                    await context.pushNamed('/settings/player/renderer');
+                    SettingsCategorySelected('/settings/player/renderer').dispatch(context);
                   },
                   title: Text('视频渲染器'),
                   description: Text('选择视频输出方式'),
@@ -309,7 +308,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               SettingsTile(
                 leading: Icons.auto_awesome_rounded,
                 onPressed: (_) async {
-                  context.pushNamed('/settings/player/super');
+                  SettingsCategorySelected('/settings/player/super').dispatch(context);
                 },
                 title: Text('超分辨率'),
               ),

@@ -8,6 +8,15 @@ import 'package:kazumi/services/platform/tv_mode.dart';
 
 enum _TileKind { plain, toggle, radio }
 
+/// 设置内部二级页导航通知：由设置页监听并推入其内嵌出口。
+/// [arguments] 透传给目标路由（如插件编辑器的插件对象）。
+class SettingsCategorySelected extends Notification {
+  const SettingsCategorySelected(this.path, {this.arguments});
+
+  final String path;
+  final Object? arguments;
+}
+
 class SettingsList extends StatelessWidget {
   const SettingsList({
     super.key,

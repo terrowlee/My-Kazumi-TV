@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/bean/settings/network_mirror_settings.dart';
 import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
@@ -62,7 +61,7 @@ class _ProxySettingsPageState extends State<ProxySettingsPage> {
               SettingsTile(
                 leading: Icons.tune_rounded,
                 onPressed: (_) async {
-                  await context.pushNamed('/settings/proxy/editor');
+                  SettingsCategorySelected('/settings/proxy/editor').dispatch(context);
                   if (mounted) setState(() {});
                 },
                 title: const Text('代理配置'),

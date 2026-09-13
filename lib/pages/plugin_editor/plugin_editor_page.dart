@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kazumi/bean/settings/settings_list.dart';
 
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:kazumi/bean/widget/loading_indicator.dart';
@@ -407,7 +408,7 @@ class _PluginEditorPageState extends State<PluginEditorPage> {
   void _testRule() {
     final editedPlugin = _tryBuildEditedPlugin();
     if (editedPlugin == null) return;
-    context.pushNamed('/settings/plugin/test', arguments: editedPlugin);
+    SettingsCategorySelected('/settings/plugin/test', arguments: editedPlugin).dispatch(context);
   }
 
   Future<void> _save() async {

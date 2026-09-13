@@ -12,13 +12,11 @@ My-Kazumi-TV 基于 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 与
 
 ### 电视适配与遥控器
 
-- 应用名 **My-Kazumi-TV**，独立包名 `com.terrowlee.kazumi.tv`，带 TV Banner，
-  可与手机版共存，出现在 Google TV 桌面
 - 部分电视 ROM 的系统导航兼容键码（280–283）在原生层翻译为标准方向键
 - 播放中**长按左/右键 = SeekSession**：HUD 实时预览目标位置，松开才跳转；短按仍为快进/快退
 - 设置页焦点高亮（主题色边框 + 填充），多选一设置改为**弹出选择**，
   移除冗余的返回/关闭按钮与装饰性横幅
-- 部分电视系统用户空间为 32 位（如 Sony X90K），提供 `armeabi-v7a` 包
+- 部分电视系统用户空间为 32 位，提供 `armeabi-v7a` 包
 
 ### 弹幕与搜索可用性
 
@@ -46,9 +44,9 @@ My-Kazumi-TV 基于 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 与
 到 [Releases](https://github.com/terrowlee/My-Kazumi-TV/releases) 页面下载，
 或按下方说明从源码构建。
 
-| 包 | 适用 |
-| --- | --- |
-| `*-arm64-v8a.apk` | 64 位用户空间的电视/盒子 |
+| 包                  | 适用                                         |
+| ------------------- | -------------------------------------------- |
+| `*-arm64-v8a.apk`   | 64 位用户空间的电视/盒子                     |
 | `*-armeabi-v7a.apk` | 32 位用户空间的电视/盒子（Sony X90K 等常见） |
 
 安装方式二选一：

@@ -6,8 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/card/rule_card.dart';
+import 'package:kazumi/bean/settings/settings_list.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
 import 'package:kazumi/bean/widget/loading_indicator.dart';
@@ -76,10 +76,9 @@ class _PluginViewPageState extends State<PluginViewPage> {
     if (!mounted || source == null) return;
     switch (source) {
       case RuleAddSource.catalog:
-        context.pushNamed('/settings/plugin/shop');
+        SettingsCategorySelected('/settings/plugin/shop').dispatch(context);
       case RuleAddSource.create:
-        context.pushNamed('/settings/plugin/editor',
-            arguments: Plugin.fromTemplate());
+        SettingsCategorySelected('/settings/plugin/editor', arguments: Plugin.fromTemplate()).dispatch(context);
       case RuleAddSource.clipboard:
         String? initialValue;
         try {
@@ -262,7 +261,7 @@ class _PluginViewPageState extends State<PluginViewPage> {
                                 style: FilledButton.styleFrom(
                                     minimumSize: const Size(120, 48)),
                                 onPressed: () =>
-                                    context.pushNamed('/settings/plugin/shop'),
+                                    SettingsCategorySelected('/settings/plugin/shop').dispatch(context),
                                 icon: const Icon(Icons.travel_explore_rounded),
                                 label: const Text('规则仓库')),
                           ],
@@ -336,8 +335,7 @@ class _PluginViewPageState extends State<PluginViewPage> {
                             actions: [
                               if (all.isEmpty)
                                 StateActionButton.tonal(
-                                    onPressed: () => context
-                                        .pushNamed('/settings/plugin/shop'),
+                                    onPressed: () => SettingsCategorySelected('/settings/plugin/shop').dispatch(context),
                                     icon: Icons.travel_explore_rounded,
                                     text: '浏览规则仓库')
                               else
@@ -366,8 +364,7 @@ class _PluginViewPageState extends State<PluginViewPage> {
                           if (_selecting) {
                             _toggleSelection(plugin.name);
                           } else {
-                            context.pushNamed('/settings/plugin/editor',
-                                arguments: plugin);
+                            SettingsCategorySelected('/settings/plugin/editor', arguments: plugin).dispatch(context);
                           }
                         },
                         onLongPress: () => setState(() {
@@ -440,13 +437,12 @@ class _PluginViewPageState extends State<PluginViewPage> {
         menuChildren: [
           MenuItemButton(
               leadingIcon: const Icon(Icons.edit_outlined),
-              onPressed: () => context.pushNamed('/settings/plugin/editor',
-                  arguments: plugin),
+              onPressed: () => SettingsCategorySelected('/settings/plugin/editor', arguments: plugin).dispatch(context),
               child: const Text('编辑规则')),
           MenuItemButton(
               leadingIcon: const Icon(Icons.bug_report_outlined),
               onPressed: () =>
-                  context.pushNamed('/settings/plugin/test', arguments: plugin),
+                  SettingsCategorySelected('/settings/plugin/test', arguments: plugin).dispatch(context),
               child: const Text('测试规则')),
           MenuItemButton(
               leadingIcon: const Icon(Icons.sync_rounded),
