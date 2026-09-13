@@ -326,25 +326,8 @@ class _AppWidgetState extends State<AppWidget>
           themeMode: themeProvider.themeMode,
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           routerConfig: ModularApp.routerConfigOf(context),
-          builder: (context, child) {
-            Widget shell = TvAppShell(child: child ?? const SizedBox.shrink());
-            // 全局缩放：按 屏幕尺寸/缩放比 布局，再整体铺满屏幕。
-            // FittedBox 同时缩放布局与绘制（含对话框），命中测试自动跟随。
-            final scale =
-                GStorage.getSetting<double>(SettingsKeys.uiScale) / 100;
-            if (scale > 0 && scale != 1) {
-              final size = MediaQuery.sizeOf(context);
-              shell = FittedBox(
-                fit: BoxFit.fill,
-                child: SizedBox(
-                  width: size.width / scale,
-                  height: size.height / scale,
-                  child: shell,
-                ),
-              );
-            }
-            return shell;
-          },
+          builder: (context, child) =>
+              TvAppShell(child: child ?? const SizedBox.shrink()),
         );
       },
     );

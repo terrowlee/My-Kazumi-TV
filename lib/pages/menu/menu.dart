@@ -7,6 +7,7 @@ import 'package:kazumi/navigation.dart';
 import 'package:kazumi/pages/menu/route_visibility.dart';
 import 'package:kazumi/pages/router.dart';
 import 'package:kazumi/services/platform/tv_mode.dart';
+import 'package:kazumi/services/storage/storage.dart';
 import 'package:kazumi/services/platform/tv_channel_input.dart';
 import 'package:kazumi/bean/widget/tv_focus_navigation.dart';
 
@@ -176,7 +177,7 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return RouteVisibility(
+    Widget shell = RouteVisibility(
       isCovered: _isCovered,
       child: Focus(
         canRequestFocus: false,
@@ -198,6 +199,27 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
         ),
       ),
     );
+    if (TvMode.enabled) {
+      // 浏览 UI 整体缩放只作用于主边栏壳：播放器等根路由推入的全屏页
+      // 不被缩放。MediaQuery.size 同步缩小，保证壳内布局与约束一致。
+      final scale = GStorage.getSetting<double>(SettingsKeys.uiScale) / 100;
+      if (scale > 0 && scale != 1) {
+        final mq = MediaQuery.of(context);
+        final scaledSize = Size(mq.size.width / scale, mq.size.height / scale);
+        shell = MediaQuery(
+          data: mq.copyWith(size: scaledSize),
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: SizedBox(
+              width: scaledSize.width,
+              height: scaledSize.height,
+              child: shell,
+            ),
+          ),
+        );
+      }
+    }
+    return shell;
   }
 
   Widget _outlet(BuildContext context, {BorderRadius? borderRadius}) {

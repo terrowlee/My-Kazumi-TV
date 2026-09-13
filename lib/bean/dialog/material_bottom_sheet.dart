@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:kazumi/services/platform/tv_mode.dart';
+
 const EdgeInsets materialBottomSheetContentPadding =
     EdgeInsets.fromLTRB(24, 0, 24, 24);
 
@@ -51,7 +53,7 @@ class MaterialBottomSheetHeader extends StatelessWidget {
               if (trailing != null) ...[
                 const SizedBox(width: 12),
                 trailing!,
-              ] else if (onClose != null) ...[
+              ] else if (onClose != null && !TvMode.enabled) ...[
                 const SizedBox(width: 12),
                 IconButton(
                   onPressed: onClose,

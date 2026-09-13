@@ -1191,19 +1191,21 @@ class PlayerItemPanelState extends State<PlayerItemPanel> {
                             MediaQuery.of(context).size.height <
                                 MediaQuery.of(context).size.width)
                         ? Container()
-                        : IconButton(
-                            focusNode: _bottomFullscreenFocus,
-                            color: Colors.white,
-                            icon: Icon(videoPageController.isFullscreen
-                                ? Icons.fullscreen_exit_rounded
-                                : Icons.fullscreen_rounded),
-                            tooltip: videoPageController.isFullscreen
-                                ? '退出全屏'
-                                : '全屏',
-                            onPressed: () {
-                              widget.handleFullscreen();
-                            },
-                          ),
+                        : (TvMode.enabled
+                            ? Container()
+                            : IconButton(
+                                focusNode: _bottomFullscreenFocus,
+                                color: Colors.white,
+                                icon: Icon(videoPageController.isFullscreen
+                                    ? Icons.fullscreen_exit_rounded
+                                    : Icons.fullscreen_rounded),
+                                tooltip: videoPageController.isFullscreen
+                                    ? '退出全屏'
+                                    : '全屏',
+                                onPressed: () {
+                                  widget.handleFullscreen();
+                                },
+                              )),
                   ],
                 ),
                 topRow: false,
