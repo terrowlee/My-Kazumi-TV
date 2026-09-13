@@ -54,7 +54,7 @@ PATH 追加 .sdk\flutter\bin 与 .sdk\android-sdk\platform-tools
 ## 进度（2026-09-13）
 
 - ✅ 环境：`.sdk/` 内已装 JDK 17、Android SDK（platform 34/36 等）、Flutter 3.47.2、pub-cache（全部 D 盘隔离）
-- ✅ 基线：tv flavor debug APK 构建通过（包名 com.znbsf.kazumi.tv，label My-Kazumi-TV，leanback 声明齐全）
+- ✅ 基线：tv flavor debug APK 构建通过（包名 com.terrowlee.kazumi.tv，label My-Kazumi-TV，leanback 声明齐全）
 - ✅ 分支已自带 mobile/tv 双 flavor 与 TV 交互基建（按键路由链、OK 两态、控制栏焦点遍历、选集 tile 自动定位当前集）
 - ✅ 改动：`android/app/build.gradle`（flutter_native_splash findProject 守卫）、gradle-wrapper 腾讯镜像、应用名 My-Kazumi-TV、about 页标题
 - ✅ 弹幕修复（方案=自定义服务器）：

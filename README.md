@@ -12,7 +12,7 @@ My-Kazumi-TV 基于 [Predidit/Kazumi](https://github.com/Predidit/Kazumi) 与
 
 ### 电视适配与遥控器
 
-- 应用名 **My-Kazumi-TV**，独立包名 `com.znbsf.kazumi.tv`，带 TV Banner，
+- 应用名 **My-Kazumi-TV**，独立包名 `com.terrowlee.kazumi.tv`，带 TV Banner，
   可与手机版共存，出现在 Google TV 桌面
 - 部分电视 ROM 的系统导航兼容键码（280–283）在原生层翻译为标准方向键
 - 播放中**长按左/右键 = SeekSession**：HUD 实时预览目标位置，松开才跳转；短按仍为快进/快退

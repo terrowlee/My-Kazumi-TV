@@ -113,7 +113,7 @@
               --dart-define=KAZUMI_KEY=$KAZUMI_KEY
             shell: bash
           - name: Package Android TV output
-            run: cp build/app/outputs/apk/tv/release/Kazumi-TV-*-arm64-v8a-release.apk Kazumi-TV-${tag}-arm64-v8a.apk
+            run: cp build/app/outputs/apk/tv/release/My-Kazumi-TV-*-arm64-v8a-release.apk My-Kazumi-TV-${tag}-arm64-v8a.apk
             shell: bash
 
           - name: Upload android outputs

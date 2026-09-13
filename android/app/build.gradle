@@ -67,7 +67,7 @@ android {
         }
         tv {
             dimension "device"
-            applicationId "com.znbsf.kazumi.tv"
+            applicationId "com.terrowlee.kazumi.tv"
             manifestPlaceholders["appLabel"] = "My-Kazumi-TV"
             buildConfigField "boolean", "IS_TV_BUILD", "true"
         }
@@ -112,7 +112,7 @@ android.applicationVariants.all { variant ->
         if (abiVersionCode != null) {
             output.versionCodeOverride = variant.versionCode * 10 + abiVersionCode
         }
-        def productName = variant.flavorName == "tv" ? "Kazumi-TV" : "Kazumi-Mobile"
+        def productName = variant.flavorName == "tv" ? "My-Kazumi-TV" : "Kazumi-Mobile"
         def abiSuffix = abi == null ? "" : "-${abi}"
         output.outputFileName = "${productName}-${variant.versionName}${abiSuffix}-${variant.buildType.name}.apk"
     }
