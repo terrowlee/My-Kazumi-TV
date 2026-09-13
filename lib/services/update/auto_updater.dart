@@ -190,7 +190,8 @@ class AutoUpdater {
 
   Future<void> manualCheckForUpdates() async {
     if (TvMode.enabled) {
-      await launchUrl(Uri.parse('https://github.com/znbsf/Kazumi/releases'));
+      await launchUrl(
+          Uri.parse('https://github.com/terrowlee/My-Kazumi-TV/releases'));
       return;
     }
     try {
