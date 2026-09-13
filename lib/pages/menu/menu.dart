@@ -33,8 +33,6 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
   /// other pages cover it, so it publishes that state for its subtree.
   bool _isCovered = false;
 
-  /// Guards against double-pushing the settings page from the TV rail.
-  bool _settingsFromRail = false;
 
   @override
   void didUpdateWidget(covariant ScaffoldMenu oldWidget) {
@@ -123,16 +121,10 @@ class _ScaffoldMenu extends State<ScaffoldMenu> with RouteAware {
     if (outlet == null) return;
     final path = menu.getPath(index);
     if (TvMode.enabled && path == '/my') {
-      // On TV the rail entry opens the settings page (rail of categories on
-      // the left, details on the right) directly on the root navigator; the
-      // outlet keeps showing the previous tab so back returns there.
-      if (_settingsFromRail) {
-        return;
-      }
-      _settingsFromRail = true;
-      context.pushNamed('/settings/').whenComplete(() {
-        _settingsFromRail = false;
-      });
+      // On TV the 设置 rail entry embeds the settings page in the outlet
+      // (main rail stays visible); the module is mounted at /tab/settings.
+      outlet.navigate('/tab/settings/');
+      setState(() => _selectedIndex = index);
       return;
     }
     outlet.navigate('/tab$path/');

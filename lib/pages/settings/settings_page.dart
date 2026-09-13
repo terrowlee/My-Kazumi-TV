@@ -8,7 +8,7 @@ import 'package:kazumi/bean/settings/settings_detail_scaffold.dart';
 import 'package:kazumi/bean/settings/settings_list.dart';
 import 'package:kazumi/bean/widget/content_section.dart';
 import 'package:kazumi/bean/widget/tv_back_interceptor.dart';
-import 'package:kazumi/navigation.dart';
+import 'package:kazumi/services/platform/tv_navigation.dart';
 import 'package:kazumi/pages/settings/player_settings.dart';
 import 'package:kazumi/utils/constants.dart';
 
@@ -195,16 +195,16 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   /// TV back key: inside a detail pane, back first moves focus to the
-  /// category sidebar (same as LEFT); with the sidebar focused, back exits
-  /// settings to the main page.
+  /// category sidebar (same as LEFT); with the sidebar focused, back returns
+  /// to the home tab.
   bool _handleTvBack() {
     final route = ModalRoute.of(context);
     if (route == null || !route.isCurrent) return false;
     final railNode = _railNode(_selectedCategoryPath);
     final focus = FocusManager.instance.primaryFocus;
     if (focus == railNode) {
-      // Sidebar already focused: exit settings (inner stack is discarded).
-      rootNavigatorKey.currentState?.pop();
+      // Sidebar already focused: go home (settings is embedded, not pushed).
+      TvNavigation.goHome();
       return true;
     }
     if (focus == null || _focusInPane(focus) || _location == '/settings') {
@@ -242,7 +242,23 @@ class _SettingsPageState extends State<SettingsPage> {
   final _outletKey = GlobalKey<RouterOutletState>();
   Object? _categoryNavigation;
   // Nested pushes do not update the root route state.
-  late String _location = _normalizePath(widget.location);
+  late String _location = _normalizeLocation(widget.location);
+
+  /// The embedded TV instance lives at /tab/settings/...; settings logic
+  /// everywhere else speaks /settings/..., so normalize on the way in.
+  String _normalizeLocation(String location) {
+    final path = _normalizePath(location);
+    if (TvMode.enabled && path == '/tab/settings') {
+      return '/settings';
+    }
+    return path;
+  }
+
+  /// Outlet paths must carry the /tab prefix on TV (embedded mount).
+  String _outletPath(String settingsPath) {
+    final path = _normalizePath(settingsPath);
+    return TvMode.enabled ? path.replaceFirst('/settings', '/tab/settings') : path;
+  }
 
   String get _selectedCategoryPath => _categoryPath(_location);
   bool get _isSecondaryRoute =>
@@ -253,13 +269,13 @@ class _SettingsPageState extends State<SettingsPage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.location != widget.location) {
       _categoryNavigation = null;
-      _location = _normalizePath(widget.location);
+      _location = _normalizeLocation(widget.location);
     }
   }
 
   void _replaceCategory(String path) {
     _categoryNavigation = null;
-    _outletKey.currentState!.navigate(path);
+    _outletKey.currentState!.navigate(_outletPath(path));
     setState(() => _location = _normalizePath(path));
   }
 
@@ -269,7 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final previousLocation = _location;
     _categoryNavigation = navigation;
     setState(() => _location = _normalizePath(path));
-    await _outletKey.currentState!.push<void>(path);
+    await _outletKey.currentState!.push<void>(_outletPath(path));
     // Ignore completions from history replaced by a rail selection.
     if (!mounted || _categoryNavigation != navigation) return;
     setState(() {

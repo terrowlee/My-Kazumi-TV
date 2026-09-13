@@ -25,10 +25,20 @@ import 'package:kazumi/pages/settings/theme_settings_page.dart';
 import 'package:kazumi/pages/settings/update_settings.dart';
 import 'package:kazumi/request/config/api_endpoints.dart';
 
+/// 手机端/根导航器入口：/settings/...
 final settingsModule = createModule(
   path: '/settings',
-  register: (c) {
-    c.route(
+  register: _registerSettingsRoutes,
+);
+
+/// TV 主边栏内嵌入口：挂到 /tab 下变成 /tab/settings/...
+final tabSettingsModule = createModule(
+  path: '/settings',
+  register: _registerSettingsRoutes,
+);
+
+void _registerSettingsRoutes(ModularContext c) {
+  c.route(
       '/',
       child: (context, state) => SettingsPage(location: state.uri.path),
       children: (sub) {
@@ -97,5 +107,4 @@ final settingsModule = createModule(
       )
       ..module(historyModule)
       ..module(downloadModule);
-  },
-);
+}

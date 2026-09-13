@@ -64,6 +64,8 @@ final tabModule = createModule(
             ..module(timelineModule)
             ..module(collectModule)
             ..module(myModule)
+            // TV 主边栏"设置"的内嵌实例：/tab/settings/...
+            ..module(tabSettingsModule)
             ..route(
               '/remote-help/',
               transition: TransitionType.none,
