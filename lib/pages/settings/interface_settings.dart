@@ -17,7 +17,6 @@ class _InterfaceSettingsPageState extends State<InterfaceSettingsPage> {
   late String defaultPage;
   int _exitBehavior = GStorage.getSetting(SettingsKeys.exitBehavior);
   static const _exitBehaviorTitles = ['退出 Kazumi', '最小化至托盘', '每次都询问'];
-  final MenuController defaultPageMenuController = MenuController();
 
   Map<String, String> get defaultPageMap => {
         '/tab/popular/': '推荐',
@@ -48,48 +47,12 @@ class _InterfaceSettingsPageState extends State<InterfaceSettingsPage> {
       body: SettingsList(
         sections: [
           SettingsSection(title: Text('启动'), tiles: [
-            SettingsTile(
+            TvSelectionTile<String>(
               leading: Icons.home_rounded,
-              onPressed: (_) async {
-                if (defaultPageMenuController.isOpen) {
-                  defaultPageMenuController.close();
-                } else {
-                  defaultPageMenuController.open();
-                }
-              },
-              title: Text('启动界面设置'),
-              description: Text('设置应用开启时的默认页面'),
-              value: MenuAnchor(
-                consumeOutsideTap: true,
-                controller: defaultPageMenuController,
-                builder: (_, __, ___) {
-                  return Text(
-                    defaultPageMap[defaultPage] ?? '推荐',
-                  );
-                },
-                menuChildren: [
-                  for (final entry in defaultPageMap.entries)
-                    MenuItemButton(
-                      requestFocusOnHover: false,
-                      onPressed: () => updateDefaultPage(entry.key),
-                      child: Container(
-                        height: 48,
-                        constraints: BoxConstraints(minWidth: 112),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            entry.value,
-                            style: TextStyle(
-                              color: entry.key == defaultPage
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              title: const Text('启动界面设置'),
+              items: defaultPageMap,
+              groupValue: defaultPage,
+              onChanged: updateDefaultPage,
             ),
           ]),
           SettingsSection(title: Text('展示信息'), tiles: [

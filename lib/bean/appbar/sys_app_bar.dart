@@ -1,3 +1,4 @@
+import 'package:kazumi/services/platform/tv_mode.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,8 +82,10 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
                 requireOffset: needTopOffset,
                 child: leading!,
               )
-            : (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
-                ? EmbeddedNativeControlArea(
+            : (TvMode.enabled ||
+                    !(ModalRoute.of(context)?.impliesAppBarDismissal ?? false))
+                ? null
+                : EmbeddedNativeControlArea(
                     requireOffset: needTopOffset,
                     child: IconButton(
                       onPressed: () {
@@ -90,8 +93,7 @@ class SysAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       icon: Icon(Icons.arrow_back),
                     ),
-                  )
-                : null,
+                  ),
         leadingWidth: leadingWidth,
         backgroundColor: backgroundColor,
         elevation: elevation,

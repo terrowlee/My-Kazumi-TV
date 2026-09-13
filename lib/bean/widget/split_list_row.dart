@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kazumi/bean/widget/tonal_card.dart';
+import 'package:kazumi/services/platform/tv_mode.dart';
 
 const double splitListOuterRadius = tonalCardRadius;
 const double splitListInnerRadius = 4;
@@ -53,6 +54,24 @@ class _SplitListRowState extends State<SplitListRow> {
             onHighlightChanged: _reportPress,
             child: widget.child,
           );
+    // On TV rows render flat: the grouped-card skin adds visual noise and
+    // makes the focus frames harder to see.
+    if (TvMode.enabled) {
+      return Material(
+        type: MaterialType.transparency,
+        child: ListTileTheme(
+          data: theme.listTileTheme.copyWith(
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            titleTextStyle:
+                theme.textTheme.bodyLarge?.copyWith(color: colors.onSurface),
+            subtitleTextStyle: theme.textTheme.bodyMedium
+                ?.copyWith(color: colors.onSurfaceVariant),
+          ),
+          child: _SplitRowScope(onPressChanged: _reportPress, child: child),
+        ),
+      );
+    }
     // Animate color as well as shape; Material alone snaps color changes.
     return AnimatedContainer(
       duration: MediaQuery.disableAnimationsOf(context)

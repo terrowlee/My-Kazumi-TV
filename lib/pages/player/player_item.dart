@@ -184,7 +184,8 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   Future<void> _syncAndroidAutoEnterPIPSetting() async {
-    if (!Platform.isAndroid) {
+    // TV has no picture-in-picture; keep the native side untouched.
+    if (!Platform.isAndroid || TvMode.enabled) {
       return;
     }
     final bool autoEnterPIPEnabled =
@@ -200,7 +201,7 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   Future<void> _syncAndroidPIPPlayerPageState(bool inPlayerPage) async {
-    if (!Platform.isAndroid) {
+    if (!Platform.isAndroid || TvMode.enabled) {
       return;
     }
     try {
@@ -214,7 +215,8 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   Future<void> _updateAndroidPIPActions({bool force = false}) async {
-    if (!Platform.isAndroid) {
+    // The 1s timer calls this; on TV it is a useless platform-channel hop.
+    if (!Platform.isAndroid || TvMode.enabled) {
       return;
     }
     final bool playing = playerController.playback.playing;

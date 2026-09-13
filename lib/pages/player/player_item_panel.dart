@@ -1265,7 +1265,7 @@ class PlayerItemPanelState extends State<PlayerItemPanel> {
                 ),
                 forwardIcon(focusNode: _topForwardFocus),
                 if ((isDesktop() && !videoPageController.isFullscreen) ||
-                    Platform.isAndroid)
+                    (Platform.isAndroid && !TvMode.enabled))
                   IconButton(
                     focusNode: _topPipFocus,
                     onPressed: () async {
