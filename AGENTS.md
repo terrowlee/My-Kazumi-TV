@@ -53,7 +53,7 @@ PATH+= .sdk\flutter\bin; .sdk\android-sdk\platform-tools
 - 搜索直连修正（v2）：bgm.tv 系域名在全国范围被 DNS 污染（阿里 DoH 也返回假 IP），直连必死。正确架构：`api.kazumi.fyi` 镜像的 p1 接口（详情/时间线）**不需要签名**，开箱即用；仅搜索（POST /v0/search/subjects）强制签名（KAZUMI_APPID，仅上游 CI 有）。无凭证构建的搜索由拦截器改走社区 v0 反代 `https://bgmapi.anibt.net`（ApiEndpoints.bangumiSearchMirrorDomain，实测可用，图片走 bgmimg.anibt.net）。已知残留：p1 评论接口镜像要求签名（401）、详情封面图指向被墙的 api.bgm.tv，两者在无凭证构建下不可用
 - 社区已知 Bangumi 反代：bgmapi.anibt.net（v0，实测可用）、bangumi.lol（本网络不可达）；kazumi.fyi 凭证无公开申请渠道
 - chinasoul/BT 的"二维码搜索"实为 B 站扫码登录（源码未公开，仓库只有 README）；MyTVB 二维码同为扫码登录，文本输入是自绘 T9/QWE 键盘（KeyboardView.kt）
-- TV 左栏"我的"= outlet 跳 `/tab/my/` + **根导航器 pushNamed('/settings/')**（menu.dart `_selectDestination`）。不要用 outlet.navigate('/settings/')——settings 模块的子路由在 outlet 上下文中失灵（磁贴点了没反应）
+- TV 左栏"设置"（原"我的"，label 已改）直接 `pushNamed('/settings/')` 推根导航器（menu.dart `_selectDestination`，`_settingsFromRail` 防重复推；outlet/selectedIndex 不变，返回回到原标签页）。**两个禁用方案**：outlet.navigate('/settings/')（settings 子路由在 outlet 上下文失灵）；TvSettingsIndexPage 第一层索引页（用户确认多余，已删除）
 - 首页 TV 卡片：`BangumiCardV.posterAspectRatio`（TV 0.75，其他端 0.65），卡片按高度定宽，调比例即调宽度/间距
 - 分类行最左再按左 = `TvFocusRailIntent` 跳侧栏（不回绕到最后一个分类）
 - IME 收起后 TextField 仍持有焦点导致方向键卡死：TvAppShell 的 `didChangeMetrics` 在键盘收起时对可编辑焦点 unfocus
